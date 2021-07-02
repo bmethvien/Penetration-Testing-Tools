@@ -1,6 +1,7 @@
 #!/bin/bash
 # nmap-grep.sh
 # Script for parsing and splitting grepable nmap output files
+# Created by Ted Raffle and improvements made by Bobby Methiven
 
 varTempRandom=$(( ( RANDOM % 9999 ) + 1 ))
 varTempFile="temp-nmp-$varTempRandom.txt"
