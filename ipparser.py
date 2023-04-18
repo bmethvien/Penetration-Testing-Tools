@@ -4,6 +4,7 @@ from netaddr import IPNetwork, iter_iprange, glob_to_iprange
 import re
 import sys
 import os.path
+import ipaddress
 
 '''
 The program now has support for the following.  Allows for , and ; as a means to break the rows.
@@ -14,40 +15,40 @@ Note:  When CIDR notation is used, the program removes the network and broadcast
 192.168.1.1-50
 192.168.1.*
 '''
-def process(i):
 
-	if re.search('-', i):
-		dash2(i)
-		withdash(i)
-        
-	elif re.search('/',i):
-		for ip in IPNetwork(i).iter_hosts():
+def is_valid_ip_address(ip):
+	try:
+		ipaddress.ip_address(ip)
+		return True
+	except ValueError:
+		return False
+
+def process(ip_value):
+	if re.search('-', ip_value):
+		dash2(ip_value)
+		withdash(ip_value)
+	elif re.search('/',ip_value):
+		for ip in IPNetwork(ip_value).iter_hosts():
 			print(ip)
-
-	elif re.search('^/s*$', i):
+	elif re.search('^/s*$', ip_value):
 		pass
-
-	elif re.search('\*+', i):
-		for ips in glob_to_iprange(i):
-			print(ips)
-
-	elif len(i) == 0:
+	elif re.search('\*+', ip_value):
+		for ip in glob_to_iprange(ip_value):
+			print(ip)
+	elif len(ip_value) == 0:
 		pass
-
 	else:
-		print(i.lstrip().rstrip())
+		if is_valid_ip_address(ip_value) == True:
+			print(ip_value.lstrip().rstrip())
+		else:
+			pass
 
-
-def withdash(j):
+def withdash(ip_value):
     try:
-        c = j.split('-')
-
-        firstip, secondip  = c[0].lstrip().rstrip(), c[1].lstrip().rstrip()
-
+        split_ip = ip_value.split('-')
+        firstip, secondip  = split_ip[0].lstrip().rstrip(), split_ip[1].lstrip().rstrip()
         listfirstip, listsecondip = list(firstip.split('.')), list(secondip.split('.'))
-
         start, end = int(listfirstip[3]), int(listsecondip[3])
-
         first_3_octects = listfirstip[0:3]
         first_3 = (".".join(str(dot) for dot in first_3_octects))
 
@@ -57,11 +58,11 @@ def withdash(j):
     except IndexError:
         pass
 
-def dash2(j):
+def dash2(ip):
     try:
-        c = j.split('-')
-        if len(c[1]) <= 3:
-            firstip, secondip  = c[0].lstrip().rstrip(), c[1].lstrip().rstrip()
+        pull_ip = ip.split('-')
+        if len(pull_ip[1]) <= 3:
+            firstip, secondip  = pull_ip[0].lstrip().rstrip(), pull_ip[1].lstrip().rstrip()
             listfirstip, listsecondip = list(firstip.split('.')), list(secondip.split('.'))
             start, end = int(listfirstip[3]), int(listsecondip[0])
             first_3_octects = listfirstip[0:3]
@@ -73,39 +74,34 @@ def dash2(j):
 
     except IndexError:
         pass
-
+        
 def usage():
 	print("\n" + "Example Usage is:  ./ipparser.py \"nameoffile.txt\"" + "\n")
 
 def main():
 	try:
 		filename = sys.argv[1]
-		if os.path.isfile(filename):
-			pass
-		else:
-			print("File not found")
+		if not os.path.isfile(filename):
+			print("File not Found")
 
-		with open(filename, 'r') as f:
-			newlist = [line.strip() for line in f]
+		with open(filename, 'r') as ip_option:
+			newlist = [line.strip() for line in ip_option]
 		
-		for i in newlist:
-
-			if re.search(',', i):
-				j = i.split(',')
-				for k in j:
-					process(k)
-			
-			elif re.search(';', i):
-				j = i.split(';')
-				for k in j:
-					process(k)
-
+		for ip in newlist:
+			if re.search(',', ip):
+				split_ip = ip.split(',')
+				for octet in split_ip:
+					process(octet)
+			elif re.search(';', ip):
+				split_ip = ip.split(';')
+				for octet in split_ip:
+					process(octet)
 			else:
-				process(i)        
-
+                		process(ip)
+                		        
 	except:
-		print( "You must supply a file to parse")
-		usage()
+	        print("You must supply a file to parse")
+	        usage()
 
 	sys.exit(2)
 
