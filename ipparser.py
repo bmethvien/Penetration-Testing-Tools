@@ -15,7 +15,7 @@ class IPParser:
             ipaddress.ip_address(ip)
             return True
         except ValueError:
-            return False
+            return print("Not a valid IP address")
 
     def process(self, ip_value):
         if re.search('-', ip_value):
