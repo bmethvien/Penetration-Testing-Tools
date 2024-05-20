@@ -16,7 +16,7 @@ def days(month):
             output = f"2024-{month}-{day}-upload.php"
             print(base + output)
         else:
-            file = f"2024-{month}-{day}-upload.php"
+            output = f"2024-{month}-{day}-upload.php"
             print(base + output)
 
 def main():
