@@ -2,22 +2,22 @@ base = 'http://10.10.10.10/downloads/'
 #example is 2024-12-34-upload.pdf
 
 def months():
-    for i in range(1,13):
-        if i < 10:
-            i = f"0{i}"
-            days(i)
+    for month in range(1,13):
+        if month < 10:
+            month = f"0{month}"
+            days(month)
         else:
-            days(i)
+            days(month)
 
 def days(month):
-    for i in range(1,32):
-        if i < 10:
-            i = f"0{i}"
-            file = f"2024-{month}-{i}-upload.php"
-            print(base + file)
+    for day in range(1,32):
+        if day < 10:
+            day = f"0{day}"
+            output = f"2024-{month}-{day}-upload.php"
+            print(base + output)
         else:
-            file = f"2024-{month}-{i}-upload.php"
-            print(base + file)
+            file = f"2024-{month}-{day}-upload.php"
+            print(base + output)
 
 def main():
     months()
